@@ -75,17 +75,18 @@ export class FX {
 
   // DOM floating text that follows a world point.
   text(x, y, z, str, cls = '') {
-    const el = document.createElement('div'); el.className = 'ftext ' + cls; el.textContent = str; this.layer.appendChild(el);
+    // Prefixed so float styles never collide with HUD/button classes (.o2, .big).
+    const el = document.createElement('div'); el.className = 'ftext ' + cls.split(' ').filter(Boolean).map(c => 'ft-' + c).join(' '); el.textContent = str; this.layer.appendChild(el);
     this.texts.push({ el, x, y, z, t: 0, dur: cls.includes('big') ? 1.4 : .9 });
     if (this.texts.length > 30) { const o = this.texts.shift(); o.el.remove(); }
   }
-  screen(x, y, z) { this.v.set(x, y, z).project(this.camera); return { x: (this.v.x * .5 + .5) * innerWidth, y: (-this.v.y * .5 + .5) * innerHeight }; }
+  screen(x, y, z) { this.v.set(x, y, z).project(this.camera); return { x: (this.v.x * .5 + .5) * (this.vw || innerWidth), y: (-this.v.y * .5 + .5) * (this.vh || innerHeight) }; }
 
   // Coins visibly travel to the HUD counter: cheap and very satisfying.
-  coinsFly(x, y, z, n, target, onArrive) {
+  coinsFly(x, y, z, n, target, onArrive, cls = 'flycoin') {
     const from = this.screen(x, y, z), to = target.getBoundingClientRect();
     for (let i = 0; i < n; i++) {
-      const el = document.createElement('div'); el.className = 'flycoin'; el.style.left = from.x + 'px'; el.style.top = from.y + 'px'; this.layer.appendChild(el);
+      const el = document.createElement('div'); el.className = cls; el.style.left = from.x + 'px'; el.style.top = from.y + 'px'; this.layer.appendChild(el);
       const dx = (Math.random() - .5) * 80, dy = -30 - Math.random() * 50, delay = i * 45;
       el.animate([{ transform: 'translate(-50%,-50%) scale(.4)' }, { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1.1)`, offset: .3 }, { transform: `translate(calc(-50% + ${to.left + to.width / 2 - from.x}px), calc(-50% + ${to.top + to.height / 2 - from.y}px)) scale(.6)` }], { duration: 650 + Math.random() * 150, delay, easing: 'cubic-bezier(.5,0,.75,0)', fill: 'forwards' })
         .onfinish = () => { el.remove(); onArrive?.(i); };

@@ -5,9 +5,10 @@
   --font: 'Baloo 2', ui-rounded, 'SF Pro Rounded', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { margin: 0; height: 100%; overflow: hidden; background: #041b2b; color: var(--white); font-family: var(--font); overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-body { position: fixed; inset: 0; }
-#app { position: fixed; inset: 0; overflow: hidden; touch-action: none; }
+/* No fixed body: WebKit standalone clips a fixed root. One explicitly sized box (see js/viewport.js);
+   safe insets belong to controls, never to the scene height. */
+html, body { margin: 0; padding: 0; width: 100%; min-height: 100%; overflow: hidden; background: #041b2b; color: var(--white); font-family: var(--font); overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+#app { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: var(--app-h, 100dvh); overflow: hidden; touch-action: none; transform: translateZ(0); isolation: isolate; }
 #c { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 button { font: inherit; color: inherit; border: 0; cursor: pointer; touch-action: manipulation; }
 [hidden] { display: none !important; }
@@ -72,7 +73,12 @@ button { font: inherit; color: inherit; border: 0; cursor: pointer; touch-action
 /* floating texts & coins */
 #fx { position: absolute; inset: 0; pointer-events: none; z-index: 6; overflow: hidden; }
 .ftext { position: absolute; left: 0; top: 0; font-weight: 800; font-size: 20px; white-space: nowrap; text-shadow: 0 2px 0 rgba(0, 0, 0, .45); will-change: transform; }
-.ftext.gold { color: var(--gold); } .ftext.big { font-size: 28px; } .ftext.o2 { color: #bff4ff; } .ftext.pearl { color: #f6dcff; }
+.ftext.ft-gold { color: var(--gold); } .ftext.ft-big { font-size: 28px; } .ftext.ft-pearl { color: #f6dcff; }
+.ftext.ft-o2 { color: #dffaff; text-shadow: 0 2px 0 rgba(0, 40, 70, .55), 0 0 14px rgba(110, 220, 255, .9); }
+.o2.gain { animation: o2gain .7s ease-out; }
+.o2.gain .o2bar i { background: linear-gradient(90deg, #8fe9ff, #ffffff); }
+@keyframes o2gain { 0% { box-shadow: 0 0 0 0 rgba(120, 225, 255, .9); transform: scale(1); } 30% { transform: scale(1.06); } 100% { box-shadow: 0 0 0 14px rgba(120, 225, 255, 0); transform: scale(1); } }
+.flybubble { position: absolute; width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff, rgba(170, 235, 255, .7) 45%, rgba(90, 200, 255, .25)); border: 1.5px solid rgba(220, 250, 255, .9); box-shadow: 0 0 8px rgba(140, 225, 255, .7); }
 .flycoin { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff6b8, #ffd84a 45%, #e09a14); box-shadow: 0 0 10px rgba(255, 216, 74, .8); }
 
 /* intro card */

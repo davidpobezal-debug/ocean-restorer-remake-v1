@@ -327,7 +327,7 @@ export class Game {
     for (let i = this.pickups.length - 1; i >= 0; i--) {
       const q = this.pickups[i]; q.t += dt; q.m.position.y = Math.sin(q.t * 2) * .15; q.m.rotation.y += dt;
       if (Math.random() < .05) this.fx.bubble(q.x, .8, q.z, .2);
-      if (Math.hypot(this.p.x - q.x, this.p.z - q.z) < 1.3) { this.o2 = Math.min(this.maxO2 + 10, this.o2 + 10); audio.bubble(); audio.bubble(); this.fx.text(q.x, 1.4, q.z, '+10 s O₂', 'o2 big'); for (let k = 0; k < 14; k++) this.fx.bubble(q.x, .6, q.z, .35, 2.5); this.group.remove(q.m); this.pickups.splice(i, 1); this.emit('o2'); }
+      if (Math.hypot(this.p.x - q.x, this.p.z - q.z) < 1.3) { this.o2 = Math.min(this.maxO2 + 10, this.o2 + 10); audio.bubble(); audio.bubble(); this.fx.text(q.x, 1.4, q.z, '+10 s O₂', 'o2 big'); for (let k = 0; k < 14; k++) this.fx.bubble(q.x, .6, q.z, .35, 2.5); this.group.remove(q.m); this.pickups.splice(i, 1); this.emit('o2', { x: q.x, z: q.z }); }
     }
   }
 

@@ -44,10 +44,10 @@ const newSeed = () => (Math.random() * 4294967295) >>> 0;
 const fogTarget = new THREE.Color();
 
 function resize() {
-  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
-  fx.setScale(h * renderer.getPixelRatio(), camera.fov);
+  const app = $('app'), w = app.clientWidth || innerWidth, h = app.clientHeight || innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  fx.vw = w; fx.vh = h; fx.setScale(h * renderer.getPixelRatio(), camera.fov);
 }
-addEventListener('resize', resize); visualViewport?.addEventListener('resize', resize);
+addEventListener('resize', resize); addEventListener('appresize', resize); visualViewport?.addEventListener('resize', resize);
 
 function followPose() { const a = camera.aspect, h = a < .8 ? 17 : 12.5, d = a < .8 ? 7 : 6.5; return { h, d }; }
 function overviewPose(S, out) {
@@ -128,7 +128,10 @@ game.on('lowO2', () => { banner('Málo kyslíka!', 'red'); hint('🫧 Chyť bubl
 game.on('coins', ({ x, y, z, n }) => fx.coinsFly(x, y, z, n, hud.coinBox, () => { audio.tally(); hud.coinBox.classList.remove('bump'); void hud.coinBox.offsetWidth; hud.coinBox.classList.add('bump'); }));
 game.on('trashCombo', ({ n }) => fx.text(game.p.x, 2, game.p.z, `ODPAD ×${n}!`, 'gold big'));
 game.on('haptic', ({ ms }) => vibrate(ms));
-game.on('o2', () => vibrate(20));
+game.on('o2', ({ x, z }) => {
+  vibrate(20);
+  fx.coinsFly(x, .8, z, 5, hud.o2Box, i => { if (i) return; hud.o2Box.classList.remove('gain'); void hud.o2Box.offsetWidth; hud.o2Box.classList.add('gain'); }, 'flybubble');
+});
 game.on('end', d => onEnd(d));
 game.on('region', ({ name }) => { banner(`🔓 Nová oblasť!<small>${name} · plný kyslík · +1 ❤️</small>`, 'gold'); vibrate([30, 40, 60]); });
 game.on('spill', () => { banner('⚠️ Únik ropy!<small>vysaj sud, kým sa ropa rozleje</small>', 'red'); tipOnce('spill', '🛢️ Sud podrž chvíľu pod hubicou', 3500); });
